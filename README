@@ -1,0 +1,26 @@
+Pinyin
+======
+
+将汉字转为拼音
+def test_full
+    assert_equal("yedongkai", Pinyin.full("叶冬开"))
+    assert_equal("yedongkaiyedong", Pinyin.full("叶冬开叶冬"))
+    assert_equal("yedongkaiabcyedong", Pinyin.full("叶冬开abc叶冬"))
+end
+
+
+
+Introduction goes here.
+
+
+Example
+=======
+
+Example goes here.
+
+Reference
+=========
+http://qingdaonet.org/dic/pinin.htm
+
+
+Copyright (c) 2009 [name of plugin creator], released under the MIT license
