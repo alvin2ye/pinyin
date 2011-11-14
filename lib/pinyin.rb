@@ -16,7 +16,7 @@ class Pinyin
     return if value.nil?
 
     value.split(//).map do |w|
-      self.full(v).first
+      self.full(w).first
     end.join(split_char)
   end
 
@@ -24,8 +24,8 @@ class Pinyin
     return if value.nil?
 
     words = value.split(//)
-    self.full(words.shift) + words.map do |v|
-      self.full(v).first
+    self.full(words.shift) + words.map do |w|
+      self.full(w).first
     end.join(split_char)
   end
 
