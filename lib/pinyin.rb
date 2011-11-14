@@ -1,3 +1,5 @@
+require 'yaml'
+
 $KCODE = 'u'
 
 class Pinyin
@@ -16,7 +18,7 @@ class Pinyin
     return if value.nil?
 
     value.split(//).map do |w|
-      self.full(w).first
+      self.full(w)[0..0] # [0..0] != first in low version
     end.join(split_char)
   end
 
@@ -25,7 +27,7 @@ class Pinyin
 
     words = value.split(//)
     self.full(words.shift) + words.map do |w|
-      self.full(w).first
+      self.full(w)[0..0]
     end.join(split_char)
   end
 
