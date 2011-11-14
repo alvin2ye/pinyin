@@ -3,13 +3,32 @@ $KCODE = 'u'
 class Pinyin
   @@dist = YAML.load_file(File.dirname(__FILE__) + "/../dist.yml")
 
-  def self.full(value)
-    words = value.to_s.split(//)
-    words.map do |w|
+  def self.full(value, split_char = nil)
+    return if value.nil?
+
+    value.clone.split(//).map do |w|
       etymon = find_etymon(w) if zh_cn?(w)
-      etymon || w
-    end.join
+      etymon ||= w
+    end.join(split_char)
   end
+
+  def self.abbr(value, split_char = nil)
+    return if value.nil?
+
+    value.split(//).map do |w|
+      self.full(v).first
+    end.join(split_char)
+  end
+
+  def self.abbr_else(value, split_char = nil)
+    return if value.nil?
+
+    words = value.split(//)
+    self.full(words.shift) + words.map do |v|
+      self.full(v).first
+    end.join(split_char)
+  end
+
 
   def self.find_etymon(word)
     etymon = nil
@@ -24,7 +43,7 @@ class Pinyin
 
   private
 
-    def zh_cn?(w)
+    def self.zh_cn?(w)
       w.length != 1
     end
 end
