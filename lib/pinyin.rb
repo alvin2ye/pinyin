@@ -5,15 +5,23 @@ $KCODE = 'u'
 class Pinyin
   @@dist = YAML.load_file(File.dirname(__FILE__) + "/../dist.yml")
 
-  def self.full(value, split_char = nil)
+  def self.full(value, split_char = nil, multitone = false)
     return if value.nil?
 
-    value.clone.split(//).map do |w|
-      etymon = find_etymon(w) if zh_cn?(w)
-      etymon ||= w
-    end.join(split_char)
+    res = []
+    value.clone.split(//).each do |w|
+      etymon = find_etymon(w, multitone) if zh_cn?(w)
+      res << (etymon || (multitone ? [w] : w))
+    end
+
+    if multitone
+      Pinyin.cross_product_arr(res).map{|i| i.join(split_char) }.join(" ")
+    else
+      res.join(split_char)
+    end
   end
 
+  # TODO support multitone
   def self.abbr(value, split_char = nil)
     return if value.nil?
 
@@ -22,6 +30,7 @@ class Pinyin
     end.join(split_char)
   end
 
+  # TODO support multitone
   def self.abbr_else(value, split_char = nil)
     return if value.nil?
 
@@ -38,6 +47,13 @@ class Pinyin
       @@dist.each{ |k, v| return k if v.match(word) }
       nil
     end
+  end
+
+  def self.cross_product_arr(arr)
+    return arr if arr.length <= 1
+    arg_str = (1..(arr.length - 1)).map{|num| "arr[#{num}]" }.join(', ')
+
+    eval("arr[0].product(#{arg_str})")
   end
 
   private

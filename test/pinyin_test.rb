@@ -5,6 +5,9 @@ class PinyinTest < Test::Unit::TestCase
     assert_equal("yedongkai", Pinyin.full("叶冬开"))
     assert_equal("yedongkaiyedong", Pinyin.full("叶冬开叶冬"))
     assert_equal("yedongkaiabcyedong", Pinyin.full("叶冬开abc叶冬"))
+
+    assert_equal "yedongkai xiedongkai", Pinyin.full("叶冬开", nil, true)
+    assert_equal "yedongkaiabcyedong yedongkaiabcxiedong xiedongkaiabcyedong xiedongkaiabcxiedong", Pinyin.full("叶冬开abc叶冬", nil, true)
   end
 
   def test_abbr
@@ -25,6 +28,10 @@ class PinyinTest < Test::Unit::TestCase
 
     assert_equal(["ye", "xie"], Pinyin.find_etymon("叶", true))
     assert_equal([], Pinyin.find_etymon("a", true))
+  end
+
+  def test_cross_product_arr
+    assert_equal [["a", 1], ["a", 2], ["a", 3], ["b", 1], ["b", 2], ["b", 3]], Pinyin.cross_product_arr([['a', 'b'], [1, 2, 3]])
   end
 
   def test_size
