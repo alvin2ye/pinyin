@@ -22,6 +22,9 @@ class PinyinTest < Test::Unit::TestCase
   def test_find_etymon
     assert_equal("ye", Pinyin.find_etymon("叶"))
     assert_equal(nil, Pinyin.find_etymon("a"))
+
+    assert_equal(["ye", "xie"], Pinyin.find_etymon("叶", true))
+    assert_equal([], Pinyin.find_etymon("a", true))
   end
 
   def test_size

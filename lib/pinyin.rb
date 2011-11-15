@@ -31,16 +31,13 @@ class Pinyin
     end.join(split_char)
   end
 
-
-  def self.find_etymon(word)
-    etymon = nil
-    @@dist.each  do |k, v|
-      if v.match(word)
-        etymon = k and break
-      end
+  def self.find_etymon(word, multitone = false)
+    if multitone
+      @@dist.select{ |k, v| v.match(word) }.map{ |k, v| k }
+    else
+      @@dist.each{ |k, v| return k if v.match(word) }
+      nil
     end
-
-    etymon
   end
 
   private
