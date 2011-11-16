@@ -6,38 +6,33 @@ class Pinyin
   @@dist = YAML.load_file(File.dirname(__FILE__) + "/../dist.yml")
 
   def self.full(value, split_char = nil, multitone = false)
-    return if value.nil?
-
-    res = []
-    value.clone.split(//).each do |w|
-      etymon = find_etymon(w, multitone) if zh_cn?(w)
-      res << (etymon || (multitone ? [w] : w))
-    end
+    res = etymon_mapping_arr(value, split_char, multitone)
 
     if multitone
-      Pinyin.cross_product_arr(res).map{|i| i.join(split_char) }.join(" ")
+      Pinyin.cross_product_arr(res).map{|w| full_word(w, split_char) }.join("|")
     else
-      res.join(split_char)
+      full_word(res, split_char)
     end
   end
 
-  # TODO support multitone
-  def self.abbr(value, split_char = nil)
-    return if value.nil?
+  def self.abbr(value, split_char = nil, multitone = false)
+    res = etymon_mapping_arr(value, split_char, multitone)
 
-    value.split(//).map do |w|
-      self.full(w)[0..0] # [0..0] != first in low version
-    end.join(split_char)
+    if multitone
+      Pinyin.cross_product_arr(res).map{|w| abbr_word(w, split_char) }.join("|")
+    else
+      abbr_word(res, split_char)
+    end
   end
 
-  # TODO support multitone
-  def self.abbr_else(value, split_char = nil)
-    return if value.nil?
+  def self.abbr_else(value, split_char = nil, multitone = false)
+    res = etymon_mapping_arr(value, split_char, multitone)
 
-    words = value.split(//)
-    self.full(words.shift) + words.map do |w|
-      self.full(w)[0..0]
-    end.join(split_char)
+    if multitone
+      Pinyin.cross_product_arr(res).map { |w| abbr_else_word(w, split_char) }.join("|")
+    else
+      abbr_else_word(res, split_char)
+    end
   end
 
   def self.find_etymon(word, multitone = false)
@@ -60,5 +55,35 @@ class Pinyin
 
     def self.zh_cn?(w)
       w.length != 1
+    end
+
+    def self.etymon_mapping_arr(value, split_char, multitone)
+      return [] if value.nil?
+
+      result = []
+      value.clone.split(//).each do |w|
+        etymon = find_etymon(w, multitone) if zh_cn?(w)
+        result << (etymon || (multitone ? [w] : w))
+      end
+
+      result
+    end
+
+    def self.full_word(word, split_char)
+      Proc.new { word.join(split_char) }.call
+    end
+
+    def self.abbr_word(word, split_char)
+      Proc.new { word.map{|i| i[0..0]}.join(split_char) }.call
+    end
+
+    def self.abbr_else_word(word, split_char)
+      Proc.new do
+        i_index = 0
+        word.map do |w|
+          i_index += 1
+          i_index == 1 ? w : w[0..0]
+        end.join(split_char)
+      end.call
     end
 end

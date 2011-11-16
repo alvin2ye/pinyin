@@ -2,24 +2,29 @@ require 'test_helper'
 
 class PinyinTest < Test::Unit::TestCase
   def test_full
+    assert_equal("", Pinyin.full(nil))
     assert_equal("yedongkai", Pinyin.full("叶冬开"))
     assert_equal("yedongkaiyedong", Pinyin.full("叶冬开叶冬"))
     assert_equal("yedongkaiabcyedong", Pinyin.full("叶冬开abc叶冬"))
 
-    assert_equal "yedongkai xiedongkai", Pinyin.full("叶冬开", nil, true)
-    assert_equal "yedongkaiabcyedong yedongkaiabcxiedong xiedongkaiabcyedong xiedongkaiabcxiedong", Pinyin.full("叶冬开abc叶冬", nil, true)
+    assert_equal "yedongkai|xiedongkai", Pinyin.full("叶冬开", nil, true)
+    assert_equal "yedongkaiabcyedong|yedongkaiabcxiedong|xiedongkaiabcyedong|xiedongkaiabcxiedong", Pinyin.full("叶冬开abc叶冬", nil, true)
   end
 
   def test_abbr
     assert_equal("cjp", Pinyin.abbr("曹靖鹏"))
     assert_equal("cjpcj", Pinyin.abbr("曹靖鹏曹靖"))
     assert_equal("cjpabccj", Pinyin.abbr("曹靖鹏abc曹靖"))
+
+    assert_equal("gjp|hjp", Pinyin.abbr("红靖鹏", nil, true))
   end
 
   def test_abbr_else
     assert_equal("caojp", Pinyin.abbr_else("曹靖鹏"))
     assert_equal("caojpcj", Pinyin.abbr_else("曹靖鹏曹靖"))
     assert_equal("caojpabccj", Pinyin.abbr_else("曹靖鹏abc曹靖"))
+
+    assert_equal("gongyjp|gongxjp|hongyjp|hongxjp", Pinyin.abbr_else("红叶靖鹏", nil, true))
   end
 
   def test_find_etymon
