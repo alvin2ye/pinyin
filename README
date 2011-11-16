@@ -2,12 +2,23 @@ Pinyin
 ======
 
 将汉字转为拼音
-def test_full
+  def test_full
+    assert_equal("", Pinyin.full(nil))
     assert_equal("yedongkai", Pinyin.full("叶冬开"))
-    assert_equal("yedongkaiyedong", Pinyin.full("叶冬开叶冬"))
     assert_equal("yedongkaiabcyedong", Pinyin.full("叶冬开abc叶冬"))
-end
 
+    assert_equal "yedongkai|xiedongkai", Pinyin.full("叶冬开", nil, true)
+  end
+
+  def test_abbr
+    assert_equal("cjp", Pinyin.abbr("曹靖鹏"))
+
+    assert_equal("gjp|hjp", Pinyin.abbr("红靖鹏", nil, true))
+  end
+
+  def test_abbr_else
+    assert_equal("caojp", Pinyin.abbr_else("曹靖鹏"))
+  end
 
 
 Introduction goes here.
